@@ -16,10 +16,11 @@ for link in rootLinks:
 
 date = datetime.datetime.now()
 filename = 'Results/pop_prices_{0}{1}{2}.csv'.format(date.day, date.month, date.year)
+date = date.isoformat()
 
 with open(filename, 'w', newline='') as csvfile:
     spamwriter = csv.writer(csvfile, delimiter='*', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-    spamwriter.writerow(['Category', 'Number', 'Name', 'Value', 'Is Variant', 'URL'])
+    spamwriter.writerow(['Category', 'Number', 'Name', 'Value', 'Is Variant', 'URL', 'Date'])
     for pops in results:
         for pop in pops:
-            spamwriter.writerow([pop.category, pop.number, pop.name, pop.value, pop.is_variant, pop.url])
+            spamwriter.writerow([pop.category, pop.number, pop.name, pop.value, pop.is_variant, pop.url, date])
