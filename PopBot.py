@@ -2,6 +2,8 @@ import PopParser
 import RootParser
 import csv
 import datetime
+import psycopg2
+import logging
 
 domain = 'poppriceguide.com'
 
@@ -15,12 +17,24 @@ for link in rootLinks:
     results.append(parser.parse_target())
 
 date = datetime.datetime.now()
-filename = 'Results/pop_prices_{0}{1}{2}.csv'.format(date.day, date.month, date.year)
+logging.basicConfig(filename='/home/stephen/scripts/PopPriceParser/Results/errors_{0}{1}{2}.log'.format(date.day, date.month, date.year),level=logging.DEBUG)
 date = date.isoformat()
 
-with open(filename, 'w', newline='') as csvfile:
-    spamwriter = csv.writer(csvfile, delimiter='*', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-    spamwriter.writerow(['Category', 'Number', 'Name', 'Value', 'Is Variant', 'URL', 'Date'])
-    for pops in results:
-        for pop in pops:
-            spamwriter.writerow([pop.category, pop.number, pop.name, pop.value, pop.is_variant, pop.url, date])
+connection = None
+
+try:
+	connection = psycopg2.connect(database='poppricedb', user='stephen')
+	cursor = connection.cursor()
+	for pops in results:
+		for pop in pops:
+			cursor.execute('INSERT INTO raw_daily_rates VALUES (\'{0}\', \'{1}\', \'{2}\', {3}, {4}, \'{5}\', \'{6}\');'.format(pop.category, pop.number, pop.name.replace("'",""), pop.value, pop.is_variant, pop.url, date))
+	
+	connection.commit()
+
+except Exception as e:
+	logging.debug("Error {0}".format(e))
+
+finally:
+
+	if connection:
+		connection.close()
