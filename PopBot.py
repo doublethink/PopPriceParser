@@ -17,7 +17,7 @@ for link in rootLinks:
     results.append(parser.parse_target())
 
 date = datetime.datetime.now()
-logging.basicConfig(filename='/home/stephen/scripts/PopPriceParser/Results/errors_{0}{1}{2}.log'.format(date.day, date.month, date.year),level=logging.DEBUG)
+logging.basicConfig(filename='/home/stephen/scripts/PopPriceParser/Results/errors_log.log',level=logging.DEBUG)
 date = date.isoformat()
 
 connection = None
