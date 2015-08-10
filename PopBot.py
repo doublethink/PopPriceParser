@@ -6,6 +6,7 @@ import psycopg2
 import logging
 
 domain = 'poppriceguide.com'
+logging.basicConfig(filename='/home/stephen/logs/parser.log',level=logging.DEBUG)
 
 rootParser = RootParser.RootParser(domain, "/guide/PopVinyl/1/")
 rootLinks = rootParser.parse_target()
@@ -16,9 +17,7 @@ for link in rootLinks:
     parser = PopParser.Parser(link[1], domain, link[0])
     results.append(parser.parse_target())
 
-date = datetime.datetime.now()
-logging.basicConfig(filename='/home/stephen/scripts/PopPriceParser/Results/errors_log.log',level=logging.DEBUG)
-date = date.isoformat()
+date = datetime.datetime.now().isoformat()
 
 connection = None
 
